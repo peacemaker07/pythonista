@@ -8,10 +8,12 @@ from math import sin, cos, pi
 
 A = Action
 
+# プレイヤーの画像
 standing_texture = Texture('plf:AlienGreen_front')
 walk_textures = [Texture('plf:AlienGreen_walk1'), Texture('plf:AlienGreen_walk2')]
-
+# 制限時間(秒)
 game_duration = 10
+# ゲーム完了画面表示時間(秒)
 disp_end_duration = 5
 
 # 障害物
@@ -45,38 +47,48 @@ class GameScene (Scene):
 		self.time_label.position = (self.size.w/3, self.size.h - 70)
 		self.time_label.z_position = 5
 
+		# 障害物のリストを初期化
 		self.items = []
+		# 弾のリストを初期化
 		self.lasers = []				
 		
+		# 新しいゲームの準備
 		self.new_game()
 	
 	def new_game(self):
+		# ゲームの終了時に残っていた障害物をクリア
 		for item in self.items:
 			item.remove_from_parent()
 		
 		# 背景色
 		self.background_color = '#004f82'
-								
+		
 		self.items = []
 		self.lasers = []
 		
+		# スコアを初期化
 		self.score = 0
 		self.score_label.text = '0'
 		
+		# 経過時間を計測するためゲームを始めた時間を保存
 		self.start_time = time.time()
 		
+		# プレイヤーを立っている状態に設定
 		self.walk_step = -1
-		
-		self.player.position = (self.size.w/2, 32)
+		# プレイヤーを配置
+		self.player.position = (self.size.w/2, 10)
 		self.player.texture = standing_texture
 		self.speed = 1.0
 		
+		# ゲームの状態をゲーム中に設定
 		self.game_over = False
 		self.disp_end_time = disp_end_duration
-				
+		
+		# 障害物を配置
 		self.spawn_item()
 	
 	def update(self):
+		# ゲーム終了か？
 		if self.game_over:
 			# ゲーム完了後、一定時間は完了画面を表示する
 			time_passed = time.time() - self.disp_start_time
@@ -86,7 +98,7 @@ class GameScene (Scene):
 
 		# プレイヤーの動きを更新
 		self.update_player()
-		# レーザーと障害物の衝突チェック
+		# レーザーと障害物の当たりチェック
 		self.check_laser_collisions()
 		# 制限時間を更新
 		time_passed = time.time() - self.start_time
@@ -94,45 +106,50 @@ class GameScene (Scene):
 		self.time_label.text = '{0}:{1:0>2}'.format(t/60, t%60)
 		# タイムアップかチェックする
 		if t == 0 and not self.game_over:
-			self.disp_end_game('NG')
+			self.disp_end_game('TimeUp')
 		
 	def touch_began(self, touch):
+		# ゲーム終了か？
 		if self.game_over:
 			if self.disp_end_time == 0:
+				# ゲーム終了のラベルを消して新しいゲームを始める
 				self.end_label.remove_from_parent()
 				self.new_game()
 		else:
+			# 弾をだす
 			self.shoot_laser()
 	
 	def update_player(self):
-	
+		# iPadの傾きを取得
 		g = gravity()
 		if abs(g.x) > 0.05:
 			self.player.x_scale = cmp(g.x, 0)
 			x = self.player.position.x
 			max_speed = 40
 			x = max(0, min(self.size.w, x + g.x * max_speed))
-			self.player.position = (x, 32)
+			self.player.position = (x, 10)
 
 			step = int(self.player.position.x / 40) % 2
 			
 			if step != self.walk_step:
+				# プレイヤーを歩いている状態にする
 				self.player.texture = walk_textures[step]
 				
 				sound.play_effect('rpg:Footstep00', 0.05, 1.0 + 0.5 * step)
 				self.walk_step = step
 		else:
+			# プレイヤーを立っている状態にする
 			self.player.texture = standing_texture
 			self.walk_step = -1
 		
 	def check_laser_collisions(self):
 		for laser in list(self.lasers):
+			# 画面外にある弾を削除
 			if not laser.parent:
 				self.lasers.remove(laser)
 				continue
 			for item in self.items:
-				if not isinstance(item, Meteor):
-					continue
+				# 弾が障害物に当たった場合は弾と障害物を削除
 				if laser.position in item.frame:
 					self.lasers.remove(laser)
 					laser.remove_from_parent()
@@ -141,13 +158,13 @@ class GameScene (Scene):
 	
 	def destroy_meteor(self, meteor):
 		sound.play_effect('arcade:Explosion_2', 0.2)
-		
+		# 障害物を削除
 		meteor.remove_from_parent()
 		self.items.remove(meteor)
-		
+		# スコアを更新
 		self.score += 10
 		self.score_label.text = str(self.score)
-		
+		# 障害物の破片を描画
 		for i in xrange(5):
 			m = SpriteNode('spc:MeteorBrownMed1', parent=self)
 			m.position = meteor.position + (random.uniform(-20, 20), random.uniform(-20, 20))
@@ -157,39 +174,43 @@ class GameScene (Scene):
 			
 			m.run_action(A.move_by(dx, dy, 0.6, TIMING_EASE_OUT))
 			m.run_action(A.sequence(A.scale_to(0, 0.6), A.remove()))
-			
+		
+		# 障害物が全て消えたかチェック
 		self.check_end_game()
 			
 	def check_end_game(self):
+		# 障害物が全て消えたらゲームクリア
 		if len(self.items) == 0:
 			self.disp_end_game('OK')
 	
 	def disp_end_game(self, status):
-		
 		if status == 'OK':
+			# ゲームクリアの表示を設定
 			message = 'Game Clear'
 			color = '#00ff00'
 			background_color = '#ffff00'
 			effect = 'arcade:Powerup_1'
 		else:
+			# ゲームオーバーの表示を設定
 			message = 'Time Up'
 			color = '#ff0000'
 			background_color = '#000000'
 			effect = 'arcade:Explosion_1'
-		
+		# ゲーム完了画面を表示
 		end_font = ('Arial Rounded MT Bold', 80)
 		self.end_label = LabelNode(message, end_font, parent=self)
 		self.end_label.position = (self.size.w/2, self.size.h - 300)
 		self.end_label.z_position = 1
 		self.end_label.color = color
 		self.background_color = background_color
-		
+		# ゲーム終了状態にする
 		self.game_over = True
 		self.disp_start_time = time.time()
-		
+		# ゲーム終了サウンドを鳴らす
 		sound.play_effect(effect)
 			
 	def spawn_item(self):
+		# 障害物を配置
 		for i in range(1):
 			for j in range(9):
 				meteor = Meteor(parent=self)
@@ -203,6 +224,7 @@ class GameScene (Scene):
 		if len(self.lasers) >= 3:
 			return
 		
+		# 弾を描画
 		laser = SpriteNode('spc:LaserGreen12', parent=self)
 		laser.position = self.player.position + (0, 30)
 		laser.z_position = -1
@@ -211,6 +233,8 @@ class GameScene (Scene):
 		laser.run_action(A.sequence(actions))
 		
 		self.lasers.append(laser)
+		
+		# 発射音を鳴らす
 		sound.play_effect('digital:Laser4')
 
 if __name__ == '__main__':
