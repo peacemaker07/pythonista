@@ -145,6 +145,9 @@ class GameScene (Scene):
 		meteor.remove_from_parent()
 		self.items.remove(meteor)
 		
+		self.score += 10
+		self.score_label.text = str(self.score)
+		
 		for i in xrange(5):
 			m = SpriteNode('spc:MeteorBrownMed1', parent=self)
 			m.position = meteor.position + (random.uniform(-20, 20), random.uniform(-20, 20))
