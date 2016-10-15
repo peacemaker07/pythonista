@@ -9,17 +9,17 @@ from math import sin, cos, pi
 A = Action
 
 # プレイヤーの画像
-standing_texture = Texture('plf:AlienGreen_front')
-walk_textures = [Texture('plf:AlienGreen_walk1'), Texture('plf:AlienGreen_walk2')]
+standing_texture = Texture('plf:AlienBeige_front')
+walk_textures = [Texture('plf:AlienBeige_climb1'), Texture('plf:AlienBeige_climb2')]
 # 制限時間(秒)
-game_duration = 10
+game_duration = 60
 # ゲーム完了画面表示時間(秒)
 disp_end_duration = 5
 
 # 障害物
 class Meteor (SpriteNode):
 	def __init__(self, **kwargs):
-		img = random.choice(['spc:MeteorBrownBig1', 'spc:MeteorBrownBig2'])
+		img = random.choice(['plf:Tile_BrickBrown', 'plf:Tile_BrickGrey'])
 		SpriteNode.__init__(self, img, **kwargs)
 		self.destroyed = False
 
@@ -211,7 +211,7 @@ class GameScene (Scene):
 			
 	def spawn_item(self):
 		# 障害物を配置
-		for i in range(1):
+		for i in range(9):
 			for j in range(9):
 				meteor = Meteor(parent=self)
 				meteor.position = (self.size.w-65-(j*80), self.size.h - 160 - (i*80))
