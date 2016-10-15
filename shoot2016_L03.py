@@ -58,6 +58,8 @@ class GameScene (Scene):
 	def update(self):
 		# プレイヤーの動きを更新
 		self.update_player()
+		# レーザーと障害物の当たりチェック
+		self.check_laser_collisions()
 		
 	def touch_began(self, touch):
 		# 弾をだす
@@ -96,7 +98,14 @@ class GameScene (Scene):
 				d = random.uniform(2.0, 4.0)
 				
 				self.items.append(meteor)
-			
+
+	def check_laser_collisions(self):
+		for laser in list(self.lasers):
+			# 画面外にある弾を削除
+			if not laser.parent:
+				self.lasers.remove(laser)
+				continue
+	
 	def shoot_laser(self):
 		if len(self.lasers) >= 3:
 			return
