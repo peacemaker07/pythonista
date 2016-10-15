@@ -3,12 +3,16 @@
 from scene import *
 import sound
 import random
+import time
+from math import sin, cos, pi
 
 A = Action
 
 # プレイヤーの画像
 standing_texture = Texture('plf:AlienBeige_front')
 walk_textures = [Texture('plf:AlienBeige_climb1'), Texture('plf:AlienBeige_climb2')]
+# 制限時間(秒)
+game_duration = 60
 
 # 障害物
 class Meteor (SpriteNode):
@@ -29,6 +33,18 @@ class GameScene (Scene):
 		self.player.anchor_point = (0.5, 0)
 		self.add_child(self.player)
 
+		# スコアを配置
+		score_font = ('Futura', 40)
+		self.score_label = LabelNode('0', score_font, parent=self)
+		self.score_label.position = (self.size.w/2, self.size.h - 70)
+		self.score_label.z_position = 5
+		
+		# 制限時間を配置
+		time_font = ('Futura', 40)
+		self.time_label = LabelNode('00:00', time_font, parent=self)
+		self.time_label.position = (self.size.w/3, self.size.h - 70)
+		self.time_label.z_position = 5
+
 		# 障害物のリストを初期化
 		self.items = []
 		# 弾のリストを初期化
@@ -43,6 +59,13 @@ class GameScene (Scene):
 		
 		self.items = []
 		self.lasers = []
+		
+		# スコアを初期化
+		self.score = 0
+		self.score_label.text = '0'
+		
+		# 経過時間を計測するためゲームを始めた時間を保存
+		self.start_time = time.time()
 		
 		# プレイヤーを立っている状態に設定
 		self.walk_step = -1
@@ -59,6 +82,10 @@ class GameScene (Scene):
 		self.update_player()
 		# レーザーと障害物の当たりチェック
 		self.check_laser_collisions()
+		# 制限時間を更新
+		time_passed = time.time() - self.start_time
+		t = max(0, int(game_duration - time_passed))
+		self.time_label.text = '{0}:{1:0>2}'.format(t/60, t%60)
 		
 	def touch_began(self, touch):
 		# 弾をだす
@@ -93,6 +120,32 @@ class GameScene (Scene):
 			if not laser.parent:
 				self.lasers.remove(laser)
 				continue
+			for item in self.items:
+				# 弾が障害物に当たった場合は弾と障害物を削除
+				if laser.position in item.frame:
+					self.lasers.remove(laser)
+					laser.remove_from_parent()
+					self.destroy_meteor(item)
+					break
+	
+	def destroy_meteor(self, meteor):
+		sound.play_effect('arcade:Explosion_2', 0.2)
+		# 障害物を削除
+		meteor.remove_from_parent()
+		self.items.remove(meteor)
+		# スコアを更新
+		self.score += 10
+		self.score_label.text = str(self.score)
+		# 障害物の破片を描画
+		for i in xrange(5):
+			m = SpriteNode('spc:MeteorBrownMed1', parent=self)
+			m.position = meteor.position + (random.uniform(-20, 20), random.uniform(-20, 20))
+			
+			angle = random.uniform(0, pi*2)
+			dx, dy = cos(angle) * 80, sin(angle) * 80
+			
+			m.run_action(A.move_by(dx, dy, 0.6, TIMING_EASE_OUT))
+			m.run_action(A.sequence(A.scale_to(0, 0.6), A.remove()))
 
 	def spawn_item(self):
 		# 障害物を配置

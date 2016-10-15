@@ -13,19 +13,18 @@ class GameScene (Scene):
 	
 	# 初期設定		
 	def setup(self):
-		
+
 		ground = Node(parent=self)
 		
 		# プレイヤーを配置
 		self.player = SpriteNode(standing_texture)
 		self.player.anchor_point = (0.5, 0)
 		self.add_child(self.player)
-				
+
 		# 新しいゲームの準備
 		self.new_game()
 	
 	def new_game(self):
-		
 		# 背景色
 		self.background_color = '#004f82'
 		
@@ -37,10 +36,9 @@ class GameScene (Scene):
 		self.speed = 1.0
 		
 	def update(self):
-
 		# プレイヤーの動きを更新
 		self.update_player()
-	
+
 	def update_player(self):
 		# iPadの傾きを取得
 		g = gravity()

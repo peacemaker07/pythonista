@@ -3,6 +3,7 @@
 from scene import *
 import sound
 import random
+from math import sin, cos, pi
 
 A = Action
 
@@ -31,6 +32,8 @@ class GameScene (Scene):
 
 		# 障害物のリストを初期化
 		self.items = []
+		# 弾のリストを初期化
+		self.lasers = []				
 		
 		# 新しいゲームの準備
 		self.new_game()
@@ -40,6 +43,7 @@ class GameScene (Scene):
 		self.background_color = '#004f82'
 		
 		self.items = []
+		self.lasers = []
 		
 		# プレイヤーを立っている状態に設定
 		self.walk_step = -1
@@ -54,7 +58,13 @@ class GameScene (Scene):
 	def update(self):
 		# プレイヤーの動きを更新
 		self.update_player()
-
+		# レーザーと障害物の当たりチェック
+		self.check_laser_collisions()
+		
+	def touch_began(self, touch):
+		# 弾をだす
+		self.shoot_laser()
+	
 	def update_player(self):
 		# iPadの傾きを取得
 		g = gravity()
@@ -78,6 +88,36 @@ class GameScene (Scene):
 			self.player.texture = standing_texture
 			self.walk_step = -1
 
+	def check_laser_collisions(self):
+		for laser in list(self.lasers):
+			# 画面外にある弾を削除
+			if not laser.parent:
+				self.lasers.remove(laser)
+				continue
+			for item in self.items:
+				# 弾が障害物に当たった場合は弾と障害物を削除
+				if laser.position in item.frame:
+					self.lasers.remove(laser)
+					laser.remove_from_parent()
+					self.destroy_meteor(item)
+					break
+	
+	def destroy_meteor(self, meteor):
+		sound.play_effect('arcade:Explosion_2', 0.2)
+		# 障害物を削除
+		meteor.remove_from_parent()
+		self.items.remove(meteor)
+		# 障害物の破片を描画
+		for i in xrange(5):
+			m = SpriteNode('spc:MeteorBrownMed1', parent=self)
+			m.position = meteor.position + (random.uniform(-20, 20), random.uniform(-20, 20))
+			
+			angle = random.uniform(0, pi*2)
+			dx, dy = cos(angle) * 80, sin(angle) * 80
+			
+			m.run_action(A.move_by(dx, dy, 0.6, TIMING_EASE_OUT))
+			m.run_action(A.sequence(A.scale_to(0, 0.6), A.remove()))
+		
 	def spawn_item(self):
 		# 障害物を配置
 		for i in range(9):
@@ -88,6 +128,23 @@ class GameScene (Scene):
 				d = random.uniform(2.0, 4.0)
 				
 				self.items.append(meteor)
+
+	def shoot_laser(self):
+		if len(self.lasers) >= 3:
+			return
+		
+		# 弾を描画
+		laser = SpriteNode('spc:LaserGreen12', parent=self)
+		laser.position = self.player.position + (0, 30)
+		laser.z_position = -1
+		
+		actions = [A.move_by(0, self.size.h, 1.2 * self.speed), A.remove()]
+		laser.run_action(A.sequence(actions))
+		
+		self.lasers.append(laser)
+		
+		# 発射音を鳴らす
+		sound.play_effect('digital:Laser4')
 
 if __name__ == '__main__':
 	run(GameScene(), PORTRAIT, show_fps=True)
