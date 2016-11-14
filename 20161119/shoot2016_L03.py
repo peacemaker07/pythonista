@@ -41,7 +41,7 @@ class GameScene (Scene):
 		self.new_game()
 	
 	def update(self):
-    		# プレイヤーの動きを更新
+		# プレイヤーの動きを更新
 		self.update_player()
 		# レーザーと障害物の当たりチェック
 		self.check_laser_collisions()
@@ -64,7 +64,7 @@ class GameScene (Scene):
 		self.spawn_item()
 
 	def spawn_item(self):
-    		# 障害物を配置
+		# 障害物を配置
 		for i in range(9):
 			for j in range(9):
 				meteor = Meteor(parent=self)

@@ -28,7 +28,7 @@ class GameScene (Scene):
 		self.new_game()
 	
 	def update(self):
-    	# プレイヤーの動きを更新
+		# プレイヤーの動きを更新
 		self.update_player()
 
 	def new_game(self):
@@ -45,7 +45,7 @@ class GameScene (Scene):
 		self.speed = 1.0
 		
 	def spawn_item(self):
-    		# 障害物を配置
+		# 障害物を配置
 		for i in range(9):
 			for j in range(9):
 				meteor = Meteor(parent=self)

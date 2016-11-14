@@ -28,7 +28,7 @@ class GameScene (Scene):
 		self.speed = 1.0
 		
 	def spawn_item(self):
-    		# 障害物を配置
+		# 障害物を配置
 		for i in range(9):
 			for j in range(9):
 				meteor = Meteor(parent=self)
