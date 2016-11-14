@@ -34,24 +34,19 @@ class GameScene (Scene):
 
 		# 障害物のリストを初期化
 		self.items = []
-		# 弾のリストを初期化
-		self.lasers = []				
 		
 		# 新しいゲームの準備
 		self.new_game()
 	
 	def update(self):
-    		# プレイヤーの動きを更新
+    	# プレイヤーの動きを更新
 		self.update_player()
-		# レーザーと障害物の当たりチェック
-		self.check_laser_collisions()
 
 	def new_game(self):
 		# 背景色
 		self.background_color = '#004f82'
 		
 		self.items = []
-		self.lasers = []
 		
 		# プレイヤーを立っている状態に設定
 		self.walk_step = -1
@@ -74,10 +69,6 @@ class GameScene (Scene):
 				
 				self.items.append(meteor)
 
-	def touch_began(self, touch):
-		# 弾をだす
-		self.shoot_laser()
-	
 	def update_player(self):
 		# iPadの傾きを取得
 		g = gravity()
@@ -101,26 +92,6 @@ class GameScene (Scene):
 			self.player.texture = standing_texture
 			self.walk_step = -1
 
-	def check_laser_collisions(self):
-		for laser in list(self.lasers):
-			# 画面外にある弾を削除
-			if not laser.parent:
-				self.lasers.remove(laser)
-				continue
-			for item in self.items:
-				# 弾が障害物に当たった場合は弾と障害物を削除
-				if laser.position in item.frame:
-					self.lasers.remove(laser)
-					laser.remove_from_parent()
-					self.destroy_meteor(item)
-					break
-
-	def destroy_meteor(self, meteor):
-		sound.play_effect('arcade:Explosion_2', 0.2)
-		# 障害物を削除
-		meteor.remove_from_parent()
-		self.items.remove(meteor)
-		
 	def shoot_laser(self):
 		if len(self.lasers) >= 3:
 			return

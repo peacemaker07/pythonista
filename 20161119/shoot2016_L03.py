@@ -10,10 +10,13 @@ A = Action
 standing_texture = Texture('plf:AlienBeige_front')
 walk_textures = [Texture('plf:AlienBeige_climb1'), Texture('plf:AlienBeige_climb2')]
 
+# 障害物の画像
+meteor_img = ['plf:Tile_BrickBrown', 'plf:Tile_BrickGrey']
+
 # 障害物
 class Meteor (SpriteNode):
 	def __init__(self, **kwargs):
-		img = random.choice(['plf:Tile_BrickBrown', 'plf:Tile_BrickGrey'])
+		img = random.choice(meteor_img)
 		SpriteNode.__init__(self, img, **kwargs)
 		self.destroyed = False
 
@@ -42,7 +45,7 @@ class GameScene (Scene):
 		self.update_player()
 		# レーザーと障害物の当たりチェック
 		self.check_laser_collisions()
-		
+
 	def new_game(self):
 		# 背景色
 		self.background_color = '#004f82'
@@ -59,7 +62,18 @@ class GameScene (Scene):
 		
 		# 障害物を配置
 		self.spawn_item()
-	
+
+	def spawn_item(self):
+    		# 障害物を配置
+		for i in range(9):
+			for j in range(9):
+				meteor = Meteor(parent=self)
+				meteor.position = (self.size.w-65-(j*80), self.size.h - 160 - (i*80))
+				
+				d = random.uniform(2.0, 4.0)
+				
+				self.items.append(meteor)
+
 	def touch_began(self, touch):
 		# 弾をだす
 		self.shoot_laser()
@@ -93,17 +107,6 @@ class GameScene (Scene):
 			if not laser.parent:
 				self.lasers.remove(laser)
 				continue
-	
-	def spawn_item(self):
-		# 障害物を配置
-		for i in range(9):
-			for j in range(9):
-				meteor = Meteor(parent=self)
-				meteor.position = (self.size.w-65-(j*80), self.size.h - 160 - (i*80))
-				
-				d = random.uniform(2.0, 4.0)
-				
-				self.items.append(meteor)
 
 	def shoot_laser(self):
 		if len(self.lasers) >= 3:
