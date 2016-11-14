@@ -37,6 +37,12 @@ class GameScene (Scene):
 		# 新しいゲームの準備
 		self.new_game()
 	
+	def update(self):
+    		# プレイヤーの動きを更新
+		self.update_player()
+		# レーザーと障害物の当たりチェック
+		self.check_laser_collisions()
+		
 	def new_game(self):
 		# 背景色
 		self.background_color = '#004f82'
@@ -54,12 +60,6 @@ class GameScene (Scene):
 		# 障害物を配置
 		self.spawn_item()
 	
-	def update(self):
-		# プレイヤーの動きを更新
-		self.update_player()
-		# レーザーと障害物の当たりチェック
-		self.check_laser_collisions()
-		
 	def touch_began(self, touch):
 		# 弾をだす
 		self.shoot_laser()
