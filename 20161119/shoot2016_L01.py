@@ -79,7 +79,7 @@ class GameScene (Scene):
 			self.walk_step = -1
 
 	def shoot_laser(self):
-    	if len(self.lasers) >= 3:
+ 		if len(self.lasers) >= 3:
 			return
 		
 		# 弾を描画
