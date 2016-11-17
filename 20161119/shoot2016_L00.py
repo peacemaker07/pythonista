@@ -12,7 +12,7 @@ walk_textures = [Texture('plf:AlienBeige_climb1'), Texture('plf:AlienBeige_climb
 # 障害物の画像
 meteor_img = ['plf:Tile_BrickBrown', 'plf:Tile_BrickGrey']
 
-class GameScene (Scene):
+
 
 	def new_game(self):
 		# 背景色
@@ -27,17 +27,6 @@ class GameScene (Scene):
 		self.player.texture = standing_texture
 		self.speed = 1.0
 		
-	def spawn_item(self):
-		# 障害物を配置
-		for i in range(9):
-			for j in range(9):
-				meteor = Meteor(parent=self)
-				meteor.position = (self.size.w-65-(j*80), self.size.h - 160 - (i*80))
-				
-				d = random.uniform(2.0, 4.0)
-				
-				self.items.append(meteor)
-
 	def update_player(self):
 		# iPadの傾きを取得
 		g = gravity()
@@ -77,6 +66,3 @@ class GameScene (Scene):
 		
 		# 発射音を鳴らす
 		sound.play_effect('digital:Laser4')
-
-if __name__ == '__main__':
-	run(GameScene(), PORTRAIT, show_fps=True)

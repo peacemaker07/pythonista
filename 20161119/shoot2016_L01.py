@@ -44,17 +44,6 @@ class GameScene (Scene):
 		self.player.texture = standing_texture
 		self.speed = 1.0
 		
-	def spawn_item(self):
-		# 障害物を配置
-		for i in range(9):
-			for j in range(9):
-				meteor = Meteor(parent=self)
-				meteor.position = (self.size.w-65-(j*80), self.size.h - 160 - (i*80))
-				
-				d = random.uniform(2.0, 4.0)
-				
-				self.items.append(meteor)
-
 	def update_player(self):
 		# iPadの傾きを取得
 		g = gravity()
