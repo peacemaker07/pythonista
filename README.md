@@ -7,12 +7,12 @@ iOSアプリの[Pythonista](http://omz-software.com/pythonista/)用のリポジ�
 
 ## 内容について
 
-######programming2015
+#### programming2015
 * 2015年開催
     * [PythonでiPadのオリジナルゲームを作ろう](https://manage.doorkeeper.jp/groups/glnagano/events/34382)
     * [PythonでiPadのオリジナルゲームを作ろう（上越会場）](https://manage.doorkeeper.jp/groups/glnagano/events/34696)
 
-######programming2016
+#### programming2016
 
 * 2016年開催
     * [iPadで動くオリジナルゲームを作ろう！](https://glnagano.connpass.com/event/42459/)
@@ -40,4 +40,5 @@ iOSアプリの[Pythonista](http://omz-software.com/pythonista/)用のリポジ�
     ```
     git clone https://github.com/peacemaker07/pythonista.git
     ```
+* 参考
 http://hitoriblog.com/?p=42623
