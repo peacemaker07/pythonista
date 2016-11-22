@@ -41,4 +41,4 @@ iOSアプリの[Pythonista](http://omz-software.com/pythonista/)用のリポジ�
     git clone https://github.com/peacemaker07/pythonista.git
     ```
 * 参考
-http://hitoriblog.com/?p=42623
+    http://hitoriblog.com/?p=42623
