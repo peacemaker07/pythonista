@@ -8,13 +8,13 @@ iOSアプリの[Pythonista](http://omz-software.com/pythonista/)用のリポジ�
 ## 内容について
 
 #### programming2015
-* 2015年開催
+* 2015年開催 python講座
     * [PythonでiPadのオリジナルゲームを作ろう](https://manage.doorkeeper.jp/groups/glnagano/events/34382)
     * [PythonでiPadのオリジナルゲームを作ろう（上越会場）](https://manage.doorkeeper.jp/groups/glnagano/events/34696)
 
 #### programming2016
 
-* 2016年開催
+* 2016年開催 python講座
     * [iPadで動くオリジナルゲームを作ろう！](https://glnagano.connpass.com/event/42459/)
     * iPadで動くオリジナルゲームを作ろう！（上越会場）
 
